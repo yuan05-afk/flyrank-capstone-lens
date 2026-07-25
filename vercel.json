@@ -3,5 +3,5 @@
   "framework": "nextjs",
   "installCommand": "pnpm install",
   "buildCommand": "pnpm prisma generate && pnpm next build",
-  "crons": [{ "path": "/api/worker/tick", "schedule": "*/5 * * * *" }]
+  "crons": [{ "path": "/api/worker/tick", "schedule": "0 3 * * *" }]
 }

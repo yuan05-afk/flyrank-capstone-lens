@@ -62,7 +62,7 @@ Open the deployed URL and sign in with the `DEMO_API_KEY` value you set in Verce
 
 ## Cron
 
-`vercel.json` schedules `GET /api/worker/tick` every 5 minutes. Vercel sends the `x-vercel-cron: 1` header; the route also accepts `Authorization: Bearer <DEMO_API_KEY>` for manual ticks.
+`vercel.json` schedules `GET /api/worker/tick` once daily (Hobby plan limit). Vercel sends the `x-vercel-cron: 1` header; the route also accepts `Authorization: Bearer <DEMO_API_KEY>` for manual ticks.
 
 ## Limitations on Vercel
 
