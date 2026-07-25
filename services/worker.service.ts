@@ -1,4 +1,5 @@
 import { classificationService } from "@/services/classification.service";
+import { embeddingService } from "@/services/embedding.service";
 import { jobsRepository } from "@/repositories";
 
 export const workerService = {
@@ -7,9 +8,18 @@ export const workerService = {
     if (!job) return { processed: false };
 
     try {
-      const payload = JSON.parse(job.payload) as { imageId?: string };
+      const payload = JSON.parse(job.payload) as {
+        imageId?: string;
+        ownerType?: "image" | "post";
+        ownerId?: string;
+      };
       if (job.type === "classify" && payload.imageId) {
         const result = await classificationService.classifyOne(payload.imageId);
+        await jobsRepository.done(job.id);
+        return { processed: true, jobId: job.id, type: job.type, result };
+      }
+      if (job.type === "embed" && payload.ownerType && payload.ownerId) {
+        const result = await embeddingService.embedOne(payload.ownerType, payload.ownerId);
         await jobsRepository.done(job.id);
         return { processed: true, jobId: job.id, type: job.type, result };
       }
