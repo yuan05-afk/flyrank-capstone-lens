@@ -13,6 +13,7 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "worker:tick": "tsx scripts/tick-worker.ts",
+    "corpus:classify": "tsx scripts/classify-corpus.ts",
     "eval": "tsx scripts/run-eval.ts",
     "postinstall": "prisma generate"
   },

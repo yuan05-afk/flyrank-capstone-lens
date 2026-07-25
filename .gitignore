@@ -8,5 +8,6 @@ coverage
 prisma/*.db
 prisma/*.db-journal
 *.log
+*.tsbuildinfo
 .DS_Store
 Thumbs.db
