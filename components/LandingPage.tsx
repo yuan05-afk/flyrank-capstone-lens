@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
@@ -12,7 +13,11 @@ function Specimen({ side }: { side: "left" | "right" }) {
   return (
     <div className={`specimen ${side}`} aria-hidden="true">
       <div className="specimen-art">
-        <span className="animal">{side === "left" ? "🦊" : "🐺"}</span>
+        <img
+          src={side === "left" ? "/corpus/red-fox-1.svg" : "/corpus/gray-wolf-1.svg"}
+          alt=""
+          className="h-full w-full object-cover"
+        />
         <span className="focus-box" />
       </div>
       <div className="specimen-meta">
