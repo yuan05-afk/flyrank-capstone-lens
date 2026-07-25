@@ -5,9 +5,8 @@ import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { ScanSearch, Tags, ShieldX, Coins, ArrowRight, CheckCircle2, XCircle } from "lucide-react";
 import { BrandLockup, BrandMark } from "@/components/BrandMark";
+import { MarqueeBand } from "@/components/MarqueeBand";
 import { useLenis } from "@/hooks/useLenis";
-
-const tags = ["subject:red fox", "category:wildlife", "attribute:rust coat", "confidence:0.97", "vulpes vulpes", "mismatch:wolf", "status:guarded", "semantic match", "low confidence:review"];
 
 function Specimen({ side }: { side: "left" | "right" }) {
   return (
@@ -74,11 +73,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <div className="marquee" aria-hidden="true">
-        <div className="marquee-track">
-          {[...tags, ...tags].map((tag, i) => <span key={`${tag}-${i}`} className="tag-chip">{tag}</span>)}
-        </div>
-      </div>
+      <MarqueeBand />
 
       <section className="chapter">
         <div className="chapter-head">
