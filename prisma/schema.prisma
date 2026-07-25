@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model ImageAsset {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  path      String
+  checksum  String?
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tag       ImageTag?
+  embedding Embedding? @relation("ImageEmbedding")
+  pairings  Pairing[]
+
+  @@index([status])
+}
+
+model ImageTag {
+  id                   String     @id @default(cuid())
+  imageId              String     @unique
+  subject              String
+  category             String
+  attributesJson       String
+  caption              String
+  confidence           Float
+  flaggedLowConfidence Boolean    @default(false)
+  provider              String
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
+  image                 ImageAsset @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@index([subject])
+  @@index([category])
+}
+
+model Post {
+  id        String    @id @default(cuid())
+  slug      String    @unique
+  title     String
+  body      String
+  subject   String?
+  url       String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  embedding Embedding? @relation("PostEmbedding")
+  pairings  Pairing[]
+}
+
+model Embedding {
+  id        String      @id @default(cuid())
+  ownerType String
+  ownerId   String      @unique
+  model     String
+  dims      Int
+  vectorJson String
+  updatedAt DateTime    @updatedAt
+  image     ImageAsset? @relation("ImageEmbedding", fields: [imageId], references: [id], onDelete: Cascade)
+  imageId   String?     @unique
+  post      Post?       @relation("PostEmbedding", fields: [postId], references: [id], onDelete: Cascade)
+  postId    String?     @unique
+
+  @@index([ownerType, ownerId])
+}
+
+model Pairing {
+  id          String     @id @default(cuid())
+  postId      String
+  imageId     String
+  score       Float
+  status      String     @default("suggested")
+  guardReason String?
+  createdAt   DateTime   @default(now())
+  decidedAt   DateTime?
+  post        Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  image       ImageAsset @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+  @@index([postId, status])
+  @@unique([postId, imageId])
+}
+
+model Job {
+  id        String   @id @default(cuid())
+  type      String
+  payload   String
+  runAt     DateTime @default(now())
+  attempts  Int      @default(0)
+  lockedAt  DateTime?
+  doneAt    DateTime?
+  lastError String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([runAt, doneAt, lockedAt])
+}
+
+model CostEvent {
+  id          String   @id @default(cuid())
+  kind        String
+  model       String
+  units       Int
+  unitCostUsd Float
+  totalUsd    Float
+  refType     String
+  refId       String
+  createdAt   DateTime @default(now())
+
+  @@index([kind, createdAt])
+  @@index([refType, refId])
+}

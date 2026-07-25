@@ -1,0 +1,9 @@
+---
+description: Lens API and provider safety
+alwaysApply: true
+---
+
+Validate every public body with Zod. Require the demo session for review,
+jobs, costs, and pairing endpoints. Never commit or log provider keys. Treat
+vision output as untrusted data and validate before persistence. Low confidence
+must flag, never guess.

@@ -1,0 +1,8 @@
+---
+description: Lens architecture boundaries
+alwaysApply: true
+---
+
+Keep `repository -> service -> route handler` strict. App services depend on
+`VisionProvider` and `EmbeddingProvider`, never concrete SDK clients. Batch jobs
+must be durable and idempotent. Guard decisions stay pure and directly tested.
