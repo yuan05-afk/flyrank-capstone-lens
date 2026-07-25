@@ -159,12 +159,39 @@ export function ReviewClient() {
 
   async function runPipeline() {
     setBusy("pipeline");
-    await fetch("/api/jobs/classify", { method: "POST" });
-    await fetch("/api/jobs/embed", { method: "POST" });
-    const result = await fetch("/api/worker/tick?drain=1", { method: "POST" }).then((r) => r.json());
-    await loadBase();
-    notify("info", "Batch worker settled", `${result.processed ?? 0} due jobs processed. Existing tags remain idempotent.`);
-    setBusy(null);
+    try {
+      const classify = await fetch("/api/jobs/classify", { method: "POST" });
+      const classifyBody = await classify.json().catch(() => ({ error: "Invalid classify response" }));
+      if (!classify.ok) {
+        notify("error", "Classify enqueue failed", classifyBody.error || `HTTP ${classify.status}`);
+        return;
+      }
+
+      const embed = await fetch("/api/jobs/embed", { method: "POST" });
+      const embedBody = await embed.json().catch(() => ({ error: "Invalid embed response" }));
+      if (!embed.ok) {
+        notify("error", "Embed enqueue failed", embedBody.error || `HTTP ${embed.status}`);
+        return;
+      }
+
+      const tick = await fetch("/api/worker/tick?drain=1", { method: "POST" });
+      const result = await tick.json().catch(() => ({ error: "Invalid worker response", processed: 0 }));
+      if (!tick.ok) {
+        notify("error", "Worker tick failed", result.error || `HTTP ${tick.status}`);
+        return;
+      }
+
+      await loadBase();
+      notify(
+        "info",
+        "Batch worker settled",
+        `${result.processed ?? 0} due jobs processed. Existing tags remain idempotent.`
+      );
+    } catch (error) {
+      notify("error", "Pipeline failed", error instanceof Error ? error.message : "Unknown error");
+    } finally {
+      setBusy(null);
+    }
   }
 
   async function signOut() {
