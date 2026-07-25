@@ -178,14 +178,17 @@ queued: 57, processed: 57
 - Node.js 18.18 or newer
 - pnpm 9 or newer
 - Git
+- Postgres connection string ([Neon](https://neon.tech) free tier works; see `.env.example`)
 
 ### Clone, install, and run
 
-Clone the repository first, then install and start the app:
+Clone the repository first, copy env, then install and start the app:
 
 ```bash
 git clone https://github.com/yuan05-afk/flyrank-capstone-lens.git
 cd flyrank-capstone-lens
+cp .env.example .env
+# Edit DATABASE_URL to your Neon or local Postgres URL
 pnpm install
 pnpm db:push
 pnpm db:seed
@@ -193,6 +196,8 @@ pnpm corpus:classify
 pnpm corpus:embed
 pnpm dev
 ```
+
+For Vercel + Neon deployment steps, see [VERCEL.md](VERCEL.md).
 
 Open [http://localhost:3000](http://localhost:3000), sign in with
 `lens_demo_key_001`, then open the review desk.
@@ -271,8 +276,11 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md),
 - The checked-in corpus uses generated SVG stand-ins so the repo remains cheap,
   deterministic, and redistributable. It does not claim production image-model
   accuracy.
-- SQLite job claiming with leases is appropriate for this single-instance
-  Capstone. A distributed deployment needs transactional row locking in Postgres.
+- Production targets **Postgres (Neon)** on Vercel; local dev uses the same
+  `DATABASE_URL` shape. Job claiming uses leases suitable for this demo; very
+  high concurrency would need tighter row locking tuning.
+- On Vercel, fixture images under `public/` are read-only. New uploads that
+  write to disk are not durable until object storage is wired in.
 - Seed embeddings are deterministic feature hashing, not a substitute for a
   production embedding model. The optional live provider implements that seam.
 - The live vision path is implemented but not required or exercised without a
