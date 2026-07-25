@@ -12,7 +12,7 @@ a pairing. The default seed providers make the whole pipeline reproducible
 without cloud keys. An optional OpenAI-compatible path uses the same provider
 interfaces.
 
-**Run locally:** [Quick start](#quick-start) | [Prove it yourself](#prove-it-yourself) | [Architecture](#architecture)
+**Deployed domain:** [https://lens-flyrank.vercel.app/](https://lens-flyrank.vercel.app/) | [Quick start](#quick-start) | [Prove it yourself](#prove-it-yourself) | [Architecture](#architecture)
 
 ![Lens landing page with balanced red fox and gray wolf specimens around the Focus Match promise](docs/images/shots/lens-landing.png)
 

@@ -5,6 +5,7 @@ Copy these fields into the FlyRank **Add submission** form.
 ## Deliverable links
 
 https://github.com/yuan05-afk/flyrank-capstone-lens
+https://lens-flyrank.vercel.app/
 
 ## Notes
 
