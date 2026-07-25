@@ -49,6 +49,20 @@ export const matchingService = {
       imagesRepository.list(),
     ]);
     if (!post?.embedding) throw new Error("post embedding not found");
+    return this.rankAgainst(post, images, limit, persist ? postId : undefined);
+  },
+
+  /**
+   * Rank an already-loaded post against an already-loaded corpus.
+   * Used by eval to avoid N full image list round-trips.
+   */
+  async rankAgainst(
+    post: NonNullable<Awaited<ReturnType<typeof postsRepository.findById>>>,
+    images: Awaited<ReturnType<typeof imagesRepository.list>>,
+    limit = 8,
+    persistPostId?: string
+  ) {
+    if (!post.embedding) throw new Error("post embedding not found");
     const postVector = vectorOf(post.embedding.vectorJson);
 
     const ranked = images
@@ -75,14 +89,16 @@ export const matchingService = {
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
 
-    if (persist) {
-      for (const candidate of ranked.slice(0, 3)) {
-        await pairingsRepository.upsert({
-          postId,
-          imageId: candidate.image.id,
-          ...persistPayload(candidate.score, candidate.verdict),
-        });
-      }
+    if (persistPostId) {
+      await Promise.all(
+        ranked.slice(0, 3).map((candidate) =>
+          pairingsRepository.upsert({
+            postId: persistPostId,
+            imageId: candidate.image.id,
+            ...persistPayload(candidate.score, candidate.verdict),
+          })
+        )
+      );
     }
 
     const firstAccepted = ranked.find((candidate) => candidate.verdict.accepted);

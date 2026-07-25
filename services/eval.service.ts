@@ -11,15 +11,23 @@ function vectorOf(value: string | null | undefined): number[] {
 
 export const evalService = {
   async run() {
+    // Load the corpus once. Previously each EVAL_CASE called matchingService.rank
+    // which re-listed all 50 images + embeddings (~7 full corpus reads per boot).
+    const [images, posts] = await Promise.all([
+      imagesRepository.list(),
+      postsRepository.list(),
+    ]);
+    const postBySlug = new Map(posts.map((post) => [post.slug, post]));
+
     const results = [];
     let correct = 0;
     let noMatchExpected = 0;
     let noMatchCorrect = 0;
 
     for (const testCase of EVAL_CASES) {
-      const post = await postsRepository.findBySlug(testCase.postSlug);
+      const post = postBySlug.get(testCase.postSlug);
       if (!post) throw new Error(`missing eval post ${testCase.postSlug}`);
-      const ranked = await matchingService.rank(post.id, 8, false);
+      const ranked = await matchingService.rankAgainst(post, images, 8);
       const accepted = ranked.candidates.find((candidate) => candidate.verdict.accepted);
       const predicted = accepted?.image.tag?.subject ?? null;
       const pass =
@@ -41,7 +49,7 @@ export const evalService = {
       });
     }
 
-    const matrix = await this.runMatrix();
+    const matrix = this.runMatrixWith(images, postBySlug);
     const falseRefuse = matrix.rows.filter(
       (row) => row.expectedStatus === "suggested" && row.actualStatus !== "suggested"
     ).length;
@@ -62,13 +70,15 @@ export const evalService = {
     };
   },
 
-  async runMatrix() {
-    const images = await imagesRepository.list();
+  runMatrixWith(
+    images: Awaited<ReturnType<typeof imagesRepository.list>>,
+    postBySlug: Map<string, Awaited<ReturnType<typeof postsRepository.list>>[number]>
+  ) {
     const rows = [];
     let pass = 0;
 
     for (const caseRow of EVAL_MATRIX) {
-      const post = await postsRepository.findBySlug(caseRow.postSlug);
+      const post = postBySlug.get(caseRow.postSlug);
       const image = images.find((item) => item.name === caseRow.imageName);
       if (!post?.embedding || !image?.embedding || !image.tag) {
         throw new Error(`matrix fixture missing ${caseRow.postSlug} / ${caseRow.imageName}`);
@@ -104,8 +114,21 @@ export const evalService = {
     };
   },
 
+  async runMatrix() {
+    const [images, posts] = await Promise.all([
+      imagesRepository.list(),
+      postsRepository.list(),
+    ]);
+    return this.runMatrixWith(
+      images,
+      new Map(posts.map((post) => [post.slug, post]))
+    );
+  },
+
   async thresholdSweep() {
     const images = await imagesRepository.list();
+    const posts = await postsRepository.list();
+    const postBySlug = new Map(posts.map((post) => [post.slug, post]));
     const simValues = [0.3, 0.36, 0.42, 0.48, 0.54, 0.6];
     const confValues = [0.6, 0.66, 0.72, 0.78, 0.84];
     const points = [];
@@ -114,7 +137,7 @@ export const evalService = {
       for (const confidenceThreshold of confValues) {
         let correct = 0;
         for (const caseRow of EVAL_MATRIX) {
-          const post = await postsRepository.findBySlug(caseRow.postSlug);
+          const post = postBySlug.get(caseRow.postSlug);
           const image = images.find((item) => item.name === caseRow.imageName);
           if (!post?.embedding || !image?.embedding || !image.tag) continue;
           const score = cosineSimilarity(

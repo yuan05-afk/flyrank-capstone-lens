@@ -7,7 +7,7 @@ import { matchingService } from "@/services/matching.service";
 export async function GET(request: NextRequest) {
   const denied = requireDemoAuth(request);
   if (denied) return denied;
-  return Response.json({ pairings: await pairingsRepository.list() });
+  return Response.json({ pairings: await pairingsRepository.listDesk() });
 }
 
 export async function POST(request: NextRequest) {

@@ -4,6 +4,13 @@ export const imagesRepository = {
   list() {
     return prisma.imageAsset.findMany({ include: { tag: true, embedding: true }, orderBy: { name: "asc" } });
   },
+  /** Desk boot payload: tags only, no heavy embedding vectors. */
+  listDesk() {
+    return prisma.imageAsset.findMany({
+      include: { tag: true },
+      orderBy: { name: "asc" },
+    });
+  },
   pending() {
     return prisma.imageAsset.findMany({ where: { status: "pending" }, orderBy: { name: "asc" } });
   },
@@ -44,6 +51,10 @@ export const tagsRepository = {
 export const postsRepository = {
   list() {
     return prisma.post.findMany({ include: { embedding: true }, orderBy: { createdAt: "asc" } });
+  },
+  /** Desk boot payload: posts without embedding vectors. */
+  listDesk() {
+    return prisma.post.findMany({ orderBy: { createdAt: "asc" } });
   },
   findById(id: string) {
     return prisma.post.findUnique({ where: { id }, include: { embedding: true } });
@@ -174,6 +185,16 @@ export const costsRepository = {
     const events = await prisma.costEvent.findMany({ select: { totalUsd: true } });
     return events.reduce((sum, event) => sum + event.totalUsd, 0);
   },
+  async countsByKind() {
+    const groups = await prisma.costEvent.groupBy({
+      by: ["kind"],
+      _count: { _all: true },
+    });
+    return Object.fromEntries(groups.map((g) => [g.kind, g._count._all])) as Record<
+      string,
+      number
+    >;
+  },
 };
 
 export const pairingsRepository = {
@@ -213,6 +234,26 @@ export const pairingsRepository = {
       include: { post: true, image: { include: { tag: true } } },
       orderBy: { createdAt: "desc" },
     });
+  },
+  listDesk(limit = 40) {
+    return prisma.pairing.findMany({
+      include: { post: true, image: { include: { tag: true } } },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+  },
+  async countsByStatus() {
+    const groups = await prisma.pairing.groupBy({
+      by: ["status"],
+      _count: { _all: true },
+    });
+    const map = Object.fromEntries(groups.map((g) => [g.status, g._count._all]));
+    return {
+      accepted: (map.suggested ?? 0) + (map.approved ?? 0),
+      guarded: map.guarded ?? 0,
+      rejected: map.rejected ?? 0,
+      totalPairings: groups.reduce((sum, g) => sum + g._count._all, 0),
+    };
   },
   decide(id: string, status: "approved" | "rejected") {
     return prisma.pairing.update({

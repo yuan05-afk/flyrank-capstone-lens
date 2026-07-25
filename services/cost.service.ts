@@ -3,22 +3,18 @@ import { costsRepository, pairingsRepository } from "@/repositories";
 
 export const costService = {
   async summary() {
-    const [events, pairings, spentUsd] = await Promise.all([
-      costsRepository.list(),
-      pairingsRepository.list(),
+    const [spentUsd, kindCounts, outcomes] = await Promise.all([
       costsRepository.totalUsd(),
+      costsRepository.countsByKind(),
+      pairingsRepository.countsByStatus(),
     ]);
-    const visionCalls = events.filter((event) => event.kind === "vision").length;
-    const embeddingCalls = events.filter((event) => event.kind === "embedding").length;
-    const accepted = pairings.filter((row) =>
-      ["suggested", "approved"].includes(row.status)
-    ).length;
-    const guarded = pairings.filter((row) => row.status === "guarded").length;
+    const visionCalls = kindCounts.vision ?? 0;
+    const embeddingCalls = kindCounts.embedding ?? 0;
     const budgetUsd = BUDGET_CONFIG.maxBatchUsd;
     const remainingUsd = Math.max(0, budgetUsd - spentUsd);
 
     return {
-      events,
+      events: [],
       totalUsd: spentUsd,
       visionCalls,
       embeddingCalls,
@@ -26,13 +22,8 @@ export const costService = {
       remainingUsd,
       budgetExhausted: spentUsd >= budgetUsd,
       costPerVisionCall: visionCalls ? spentUsd / Math.max(visionCalls, 1) : 0,
-      costPerAcceptedPairing: accepted ? spentUsd / accepted : null,
-      outcomes: {
-        accepted,
-        guarded,
-        rejected: pairings.filter((row) => row.status === "rejected").length,
-        totalPairings: pairings.length,
-      },
+      costPerAcceptedPairing: outcomes.accepted ? spentUsd / outcomes.accepted : null,
+      outcomes,
     };
   },
 

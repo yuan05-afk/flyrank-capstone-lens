@@ -5,5 +5,5 @@ import { imagesRepository } from "@/repositories";
 export async function GET(request: NextRequest) {
   const denied = requireDemoAuth(request);
   if (denied) return denied;
-  return Response.json({ images: await imagesRepository.list() });
+  return Response.json({ images: await imagesRepository.listDesk() });
 }

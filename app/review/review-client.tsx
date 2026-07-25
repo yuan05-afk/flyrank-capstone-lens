@@ -79,24 +79,30 @@ export function ReviewClient() {
     );
   }, []);
 
-  const loadBase = useCallback(async () => {
-    const [postData, imageData, pairingData, costData, evalData] = await Promise.all([
+  const loadBase = useCallback(async (opts?: { includeEval?: boolean }) => {
+    const includeEval = opts?.includeEval ?? false;
+    const [postData, imageData, pairingData, costData] = await Promise.all([
       fetch("/api/posts").then((r) => r.json()),
       fetch("/api/images").then((r) => r.json()),
       fetch("/api/pairings").then((r) => r.json()),
       fetch("/api/costs").then((r) => r.json()),
-      fetch("/api/eval").then((r) => r.json()),
     ]);
     setPosts(postData.posts || []);
     setImages(imageData.images || []);
     setPairings(pairingData.pairings || []);
     setCosts(costData);
-    setEvaluation(evalData);
     setActivePostId((current) => current || postData.posts?.[0]?.id || "");
+
+    if (includeEval) {
+      void fetch("/api/eval")
+        .then((r) => r.json())
+        .then((evalData) => setEvaluation(evalData))
+        .catch(() => setEvaluation(null));
+    }
   }, []);
 
   useEffect(() => {
-    void loadBase().finally(() => setBusy(null));
+    void loadBase({ includeEval: true }).finally(() => setBusy(null));
   }, [loadBase]);
 
   const activePost = posts.find((post) => post.id === activePostId);
