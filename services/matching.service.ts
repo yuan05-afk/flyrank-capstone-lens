@@ -11,6 +11,37 @@ function vectorOf(value: string | null | undefined): number[] {
   return JSON.parse(value) as number[];
 }
 
+function assertSameEmbeddingSpace(
+  postModel: string | undefined,
+  imageModel: string | undefined,
+  postDims: number,
+  imageDims: number
+) {
+  if (!postModel || !imageModel) {
+    throw new Error("embedding model metadata missing; re-run corpus:embed");
+  }
+  if (postModel !== imageModel) {
+    throw new Error(
+      `embedding space mismatch: post uses ${postModel}, image uses ${imageModel}`
+    );
+  }
+  if (postDims !== imageDims) {
+    throw new Error(
+      `embedding dimension mismatch: post has ${postDims} dims, image has ${imageDims}`
+    );
+  }
+}
+
+function persistPayload(score: number, verdict: ReturnType<typeof guardPairing>) {
+  return {
+    score,
+    status: verdict.status,
+    guardReason: verdict.reason,
+    policyId: verdict.policyId,
+    featuresJson: JSON.stringify(verdict.features),
+  };
+}
+
 export const matchingService = {
   async rank(postId: string, limit = 8, persist = false) {
     const [post, images] = await Promise.all([
@@ -23,6 +54,12 @@ export const matchingService = {
     const ranked = images
       .filter((image) => image.tag && image.embedding)
       .map((image) => {
+        assertSameEmbeddingSpace(
+          post.embedding?.model,
+          image.embedding?.model,
+          post.embedding?.dims ?? 0,
+          image.embedding?.dims ?? 0
+        );
         const score = cosineSimilarity(
           postVector,
           vectorOf(image.embedding?.vectorJson)
@@ -33,11 +70,7 @@ export const matchingService = {
           score,
           confidence: image.tag!.confidence,
         });
-        return {
-          image,
-          score,
-          verdict,
-        };
+        return { image, score, verdict };
       })
       .sort((a, b) => b.score - a.score)
       .slice(0, limit);
@@ -47,9 +80,7 @@ export const matchingService = {
         await pairingsRepository.upsert({
           postId,
           imageId: candidate.image.id,
-          score: candidate.score,
-          status: candidate.verdict.status,
-          guardReason: candidate.verdict.reason,
+          ...persistPayload(candidate.score, candidate.verdict),
         });
       }
     }
@@ -61,6 +92,7 @@ export const matchingService = {
       reason: firstAccepted
         ? null
         : ranked[0]?.verdict.reason || "No embedded images are available.",
+      policyId: ranked[0]?.verdict.policyId ?? null,
       candidates: ranked,
     };
   },
@@ -72,6 +104,12 @@ export const matchingService = {
     ]);
     if (!post?.embedding) throw new Error("post embedding not found");
     if (!image?.embedding || !image.tag) throw new Error("tagged image embedding not found");
+    assertSameEmbeddingSpace(
+      post.embedding.model,
+      image.embedding.model,
+      post.embedding.dims,
+      image.embedding.dims
+    );
     const score = cosineSimilarity(
       vectorOf(post.embedding.vectorJson),
       vectorOf(image.embedding.vectorJson)
@@ -85,9 +123,7 @@ export const matchingService = {
     return pairingsRepository.upsert({
       postId,
       imageId,
-      score,
-      status: verdict.status,
-      guardReason: verdict.reason,
+      ...persistPayload(score, verdict),
     });
   },
 };

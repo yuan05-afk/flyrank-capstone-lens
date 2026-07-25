@@ -30,8 +30,21 @@ type Pairing = {
   post: Post;
   image: ImageAsset;
 };
-type CostSummary = { totalUsd: number; visionCalls: number; embeddingCalls: number };
-type EvalSummary = { total: number; correct: number; top1Precision: number };
+type CostSummary = {
+  totalUsd: number;
+  visionCalls: number;
+  embeddingCalls: number;
+  budgetUsd?: number;
+  remainingUsd?: number;
+  costPerAcceptedPairing?: number | null;
+};
+type EvalSummary = {
+  total: number;
+  correct: number;
+  top1Precision: number;
+  noMatchRecall?: number;
+  matrix?: { accuracy: number };
+};
 type Notice = { id: number; title: string; detail: string; tone: "info" | "ok" | "error" };
 
 function badge(status: string) {
@@ -182,8 +195,8 @@ export function ReviewClient() {
           {[
             [Tags, String(images.length), "images in corpus"],
             [ShieldX, String(images.filter((image) => image.tag?.flaggedLowConfidence).length), "low confidence"],
-            [Coins, `$${costs.totalUsd.toFixed(4)}`, `${costs.visionCalls + costs.embeddingCalls} tracked calls`],
-            [Check, evaluation ? `${(evaluation.top1Precision * 100).toFixed(0)}%` : "...", `top-1 eval · ${evaluation?.correct ?? 0}/${evaluation?.total ?? 0}`],
+            [Coins, `$${costs.totalUsd.toFixed(4)}`, `${costs.visionCalls + costs.embeddingCalls} tracked · $${(costs.remainingUsd ?? 0).toFixed(2)} budget left`],
+            [Check, evaluation ? `${(evaluation.top1Precision * 100).toFixed(0)}%` : "...", `top-1 · matrix ${evaluation?.matrix ? (evaluation.matrix.accuracy * 100).toFixed(0) : "..."}%`],
           ].map(([Icon, value, label]) => {
             const C = Icon as typeof Tags;
             return <motion.div key={String(label)} initial={reduce ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="surface p-4"><C size={19} className="text-lens" /><b className="font-display mt-2 block text-2xl">{String(value)}</b><span className="mono text-[9px] uppercase tracking-wider text-muted">{String(label)}</span></motion.div>;

@@ -1,8 +1,12 @@
+export const GUARD_POLICY_ID = "guard_policy_v1";
+
 export const GUARD_CONFIG = {
+  policyId: GUARD_POLICY_ID,
   similarityThreshold: Number(process.env.SIM_THRESHOLD || 0.42),
   confidenceThreshold: Number(process.env.CONF_THRESHOLD || 0.72),
 } as const;
 
+/** Canonical subject map. Extend this when onboarding a new domain library. */
 export const SUBJECT_ALIASES: Record<string, string[]> = {
   "red fox": ["red fox", "fox", "vulpes vulpes", "vulpes"],
   wolf: ["wolf", "gray wolf", "grey wolf", "canis lupus"],

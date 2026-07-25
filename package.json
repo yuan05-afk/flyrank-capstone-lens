@@ -15,7 +15,9 @@
     "worker:tick": "tsx scripts/tick-worker.ts",
     "corpus:classify": "tsx scripts/classify-corpus.ts",
     "corpus:embed": "tsx scripts/embed-corpus.ts",
+    "library:import": "tsx scripts/library-import.ts",
     "eval": "tsx scripts/run-eval.ts",
+    "eval:sweep": "tsx scripts/threshold-sweep.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

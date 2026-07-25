@@ -8,7 +8,7 @@ https://github.com/yuan05-afk/flyrank-capstone-lens
 
 ## Notes
 
-Backend AI Engineering, Week 10. Run: `pnpm install && pnpm db:push && pnpm db:seed && pnpm corpus:classify && pnpm corpus:embed && pnpm dev`. Demo key: `lens_demo_key_001`. The deterministic seed providers require no cloud account; force the wolf pairing to prove the mismatch guard.
+Backend AI Engineering, Week 10. Run: `pnpm install && pnpm db:push && pnpm db:seed && pnpm corpus:classify && pnpm corpus:embed && pnpm dev`. Demo key: `lens_demo_key_001`. Seed providers need no cloud account. Force the wolf pairing to prove the mismatch guard. Bring-your-own library: `pnpm library:import` or `POST /api/library`. Eval: `pnpm eval` and `pnpm eval:sweep`. See docs/MARKET.md for CMS/catalog relevance.
 
 ## Files
 

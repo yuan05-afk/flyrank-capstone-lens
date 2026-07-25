@@ -7,6 +7,7 @@ import {
   jobsRepository,
   postsRepository,
 } from "@/repositories";
+import { costService } from "@/services/cost.service";
 
 export const embeddingService = {
   async enqueueAll() {
@@ -18,14 +19,16 @@ export const embeddingService = {
     for (const image of images.filter((item) => item.tag)) {
       await jobsRepository.enqueue(
         "embed",
-        JSON.stringify({ ownerType: "image", ownerId: image.id })
+        JSON.stringify({ ownerType: "image", ownerId: image.id }),
+        `embed:image:${image.id}`
       );
       enqueued += 1;
     }
     for (const post of posts) {
       await jobsRepository.enqueue(
         "embed",
-        JSON.stringify({ ownerType: "post", ownerId: post.id })
+        JSON.stringify({ ownerType: "post", ownerId: post.id }),
+        `embed:post:${post.id}`
       );
       enqueued += 1;
     }
@@ -33,6 +36,7 @@ export const embeddingService = {
   },
 
   async embedOne(ownerType: "image" | "post", ownerId: string) {
+    await costService.assertWithinBudget();
     const provider = embeddingProvider();
     let text: string;
 
@@ -47,6 +51,10 @@ export const embeddingService = {
     }
 
     const vector = await provider.embed(text);
+    if (!Array.isArray(vector) || vector.length === 0) {
+      throw new Error("embedding provider returned an empty vector");
+    }
+
     if (ownerType === "image") {
       await embeddingsRepository.upsertForImage(ownerId, provider.id, vector);
     } else {
@@ -54,9 +62,7 @@ export const embeddingService = {
     }
 
     const units = Math.max(1, Math.ceil(text.length / 4));
-    const pricing = PRICING[provider.id as keyof typeof PRICING] ?? {
-      usdPerUnit: 0,
-    };
+    const pricing = PRICING[provider.id as keyof typeof PRICING] ?? { usdPerUnit: 0 };
     await costsRepository.create({
       kind: "embedding",
       model: provider.id,
@@ -66,6 +72,12 @@ export const embeddingService = {
       refType: ownerType,
       refId: ownerId,
     });
-    return { ownerType, ownerId, dims: vector.length, provider: provider.id };
+    return {
+      ownerType,
+      ownerId,
+      dims: vector.length,
+      provider: provider.id,
+      model: provider.id,
+    };
   },
 };

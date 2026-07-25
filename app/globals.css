@@ -66,8 +66,9 @@ body { margin: 0; background: var(--canvas); color: var(--ink); font-family: Fig
 @keyframes marquee { to { transform:translateX(-50%); } }
 .tag-chip { padding:8px 12px; border:1px solid var(--line); border-radius:999px; background:#fff; font:500 10px "IBM Plex Mono",monospace; color:var(--muted); }
 
-.chapter { max-width:1120px; margin:0 auto; padding:96px 24px; }
-.chapter-head { max-width:650px; margin-bottom:34px; }
+.chapter { max-width:1120px; margin:0 auto; padding:52px 24px; }
+.chapter + .chapter { padding-top: 28px; }
+.chapter-head { max-width:650px; margin-bottom:24px; }
 .chapter h2 { font:700 clamp(2rem,4vw,3.5rem) Outfit,sans-serif; letter-spacing:-.035em; margin:.75rem 0; }
 .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
 .feature-card { padding:24px; transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease; }

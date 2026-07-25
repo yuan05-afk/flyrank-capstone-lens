@@ -70,34 +70,41 @@ model Embedding {
 }
 
 model Pairing {
-  id          String     @id @default(cuid())
-  postId      String
-  imageId     String
-  score       Float
-  status      String     @default("suggested")
-  guardReason String?
-  createdAt   DateTime   @default(now())
-  decidedAt   DateTime?
-  post        Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
-  image       ImageAsset @relation(fields: [imageId], references: [id], onDelete: Cascade)
+  id           String     @id @default(cuid())
+  postId       String
+  imageId      String
+  score        Float
+  status       String     @default("suggested")
+  guardReason  String?
+  policyId     String?
+  featuresJson String?
+  createdAt    DateTime   @default(now())
+  decidedAt    DateTime?
+  post         Post       @relation(fields: [postId], references: [id], onDelete: Cascade)
+  image        ImageAsset @relation(fields: [imageId], references: [id], onDelete: Cascade)
 
   @@index([postId, status])
+  @@index([policyId])
   @@unique([postId, imageId])
 }
 
 model Job {
-  id        String   @id @default(cuid())
-  type      String
-  payload   String
-  runAt     DateTime @default(now())
-  attempts  Int      @default(0)
-  lockedAt  DateTime?
-  doneAt    DateTime?
-  lastError String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(cuid())
+  type           String
+  payload        String
+  idempotencyKey String?   @unique
+  runAt          DateTime  @default(now())
+  attempts       Int       @default(0)
+  lockedAt       DateTime?
+  leaseUntil     DateTime?
+  heartbeatAt    DateTime?
+  doneAt         DateTime?
+  lastError      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@index([runAt, doneAt, lockedAt])
+  @@index([leaseUntil])
 }
 
 model CostEvent {

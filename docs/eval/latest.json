@@ -1,0 +1,516 @@
+{
+  "report": {
+    "total": 7,
+    "correct": 7,
+    "top1Precision": 1,
+    "noMatchRecall": 1,
+    "guardFalseRefuseRate": 0,
+    "guardFalseAcceptRate": 0,
+    "matrix": {
+      "total": 11,
+      "correct": 11,
+      "accuracy": 1,
+      "rows": [
+        {
+          "postSlug": "red-fox-field-guide",
+          "imageName": "red-fox-1.svg",
+          "expectedStatus": "suggested",
+          "score": 0.8537,
+          "actualStatus": "suggested",
+          "reason": null,
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.8537,
+            "confidence": 0.97,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": true,
+            "aliasOverlap": true,
+            "belowSimilarityFloor": false,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "red-fox-field-guide",
+          "imageName": "gray-wolf-1.svg",
+          "expectedStatus": "guarded",
+          "score": 0.1503,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is red fox; image is gray wolf.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.1503,
+            "confidence": 0.97,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "wolf",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "red-fox-field-guide",
+          "imageName": "domestic-dog-1.svg",
+          "expectedStatus": "guarded",
+          "score": 0.1279,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is red fox; image is domestic dog.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.1279,
+            "confidence": 0.97,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "dog",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "vulpes-vulpes-habitat",
+          "imageName": "red-fox-2.svg",
+          "expectedStatus": "suggested",
+          "score": 0.8038,
+          "actualStatus": "suggested",
+          "reason": null,
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.8038,
+            "confidence": 0.945,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": true,
+            "aliasOverlap": true,
+            "belowSimilarityFloor": false,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "vulpes-vulpes-habitat",
+          "imageName": "gray-wolf-2.svg",
+          "expectedStatus": "guarded",
+          "score": 0.1653,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is red fox; image is gray wolf.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.1653,
+            "confidence": 0.945,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "wolf",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "gray-wolf-packs",
+          "imageName": "gray-wolf-1.svg",
+          "expectedStatus": "suggested",
+          "score": 0.8806,
+          "actualStatus": "suggested",
+          "reason": null,
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.8806,
+            "confidence": 0.97,
+            "postSubjectCanonical": "wolf",
+            "imageSubjectCanonical": "wolf",
+            "subjectAgreement": true,
+            "aliasOverlap": true,
+            "belowSimilarityFloor": false,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "gray-wolf-packs",
+          "imageName": "red-fox-1.svg",
+          "expectedStatus": "guarded",
+          "score": 0.4127,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is gray wolf; image is red fox.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.4127,
+            "confidence": 0.97,
+            "postSubjectCanonical": "wolf",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "family-dog-habits",
+          "imageName": "domestic-dog-1.svg",
+          "expectedStatus": "suggested",
+          "score": 0.8573,
+          "actualStatus": "suggested",
+          "reason": null,
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.8573,
+            "confidence": 0.97,
+            "postSubjectCanonical": "dog",
+            "imageSubjectCanonical": "dog",
+            "subjectAgreement": true,
+            "aliasOverlap": true,
+            "belowSimilarityFloor": false,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "family-dog-habits",
+          "imageName": "red-fox-1.svg",
+          "expectedStatus": "guarded",
+          "score": 0.277,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is domestic dog; image is red fox.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.277,
+            "confidence": 0.97,
+            "postSubjectCanonical": "dog",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "urban-rooftop-gardens",
+          "imageName": "red-fox-1.svg",
+          "expectedStatus": "guarded",
+          "score": 0.3911,
+          "actualStatus": "guarded",
+          "reason": "Subject conflict: post is urban rooftop garden; image is red fox.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.3911,
+            "confidence": 0.97,
+            "postSubjectCanonical": "urban rooftop garden",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": false,
+            "aliasOverlap": false,
+            "belowSimilarityFloor": true,
+            "belowConfidenceFloor": false
+          },
+          "pass": true
+        },
+        {
+          "postSlug": "red-fox-field-guide",
+          "imageName": "red-fox-5.svg",
+          "expectedStatus": "guarded",
+          "score": 0.8537,
+          "actualStatus": "guarded",
+          "reason": "Vision confidence 0.68 is below the 0.72 review floor.",
+          "policyId": "guard_policy_v1",
+          "features": {
+            "cosine": 0.8537,
+            "confidence": 0.68,
+            "postSubjectCanonical": "red fox",
+            "imageSubjectCanonical": "red fox",
+            "subjectAgreement": true,
+            "aliasOverlap": true,
+            "belowSimilarityFloor": false,
+            "belowConfidenceFloor": true
+          },
+          "pass": true
+        }
+      ]
+    },
+    "results": [
+      {
+        "postSlug": "red-fox-field-guide",
+        "expected": "red fox",
+        "expectedStatus": "suggested",
+        "predicted": "red fox",
+        "status": "suggested",
+        "pass": true
+      },
+      {
+        "postSlug": "vulpes-vulpes-habitat",
+        "expected": "red fox",
+        "expectedStatus": "suggested",
+        "predicted": "red fox",
+        "status": "suggested",
+        "pass": true
+      },
+      {
+        "postSlug": "barn-owl-flight",
+        "expected": "barn owl",
+        "expectedStatus": "suggested",
+        "predicted": "barn owl",
+        "status": "suggested",
+        "pass": true
+      },
+      {
+        "postSlug": "tiger-stripes",
+        "expected": "tiger",
+        "expectedStatus": "suggested",
+        "predicted": "tiger",
+        "status": "suggested",
+        "pass": true
+      },
+      {
+        "postSlug": "urban-rooftop-gardens",
+        "expected": null,
+        "expectedStatus": "no_match",
+        "predicted": null,
+        "status": "no_match",
+        "pass": true
+      },
+      {
+        "postSlug": "gray-wolf-packs",
+        "expected": "gray wolf",
+        "expectedStatus": "suggested",
+        "predicted": "gray wolf",
+        "status": "suggested",
+        "pass": true
+      },
+      {
+        "postSlug": "family-dog-habits",
+        "expected": "domestic dog",
+        "expectedStatus": "suggested",
+        "predicted": "domestic dog",
+        "status": "suggested",
+        "pass": true
+      }
+    ]
+  },
+  "sweep": {
+    "points": [
+      {
+        "similarityThreshold": 0.3,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.3,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.3,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.3,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.3,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.36,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.36,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.36,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.36,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.36,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.42,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.42,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.42,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.42,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.42,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.48,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.48,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.48,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.48,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.48,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.54,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.54,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.54,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.54,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.54,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.6,
+        "confidenceThreshold": 0.6,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.6,
+        "confidenceThreshold": 0.66,
+        "accuracy": 0.9090909090909091,
+        "correct": 10,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.6,
+        "confidenceThreshold": 0.72,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.6,
+        "confidenceThreshold": 0.78,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      },
+      {
+        "similarityThreshold": 0.6,
+        "confidenceThreshold": 0.84,
+        "accuracy": 1,
+        "correct": 11,
+        "total": 11
+      }
+    ],
+    "best": {
+      "similarityThreshold": 0.3,
+      "confidenceThreshold": 0.72,
+      "accuracy": 1,
+      "correct": 11,
+      "total": 11
+    }
+  }
+}

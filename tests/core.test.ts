@@ -5,7 +5,8 @@ import { SeedEmbeddingProvider, SeedVisionProvider } from "@/providers/seed";
 import { cosineSimilarity } from "@/lib/similarity";
 import { evalService } from "@/services/eval.service";
 import { matchingService } from "@/services/matching.service";
-import { imagesRepository, postsRepository } from "@/repositories";
+import { imagesRepository, jobsRepository, postsRepository } from "@/repositories";
+import { GUARD_POLICY_ID } from "@/config/guard.config";
 
 describe("structured vision output", () => {
   it("validates complete structured tags", async () => {
@@ -30,7 +31,7 @@ describe("structured vision output", () => {
   });
 });
 
-describe("mismatch guard", () => {
+describe("mismatch guard policy", () => {
   it("refuses wolf for a red fox post even at high similarity", () => {
     const verdict = guardPairing({
       postSubject: "red fox",
@@ -40,6 +41,8 @@ describe("mismatch guard", () => {
     });
     expect(verdict.accepted).toBe(false);
     expect(verdict.status).toBe("guarded");
+    expect(verdict.policyId).toBe(GUARD_POLICY_ID);
+    expect(verdict.features.subjectAgreement).toBe(false);
     expect(verdict.reason).toContain("Subject conflict");
   });
 
@@ -78,6 +81,7 @@ describe("semantic matching", () => {
     const ranked = await matchingService.rank(post.id, 10);
     expect(ranked.status).toBe("suggested");
     expect(ranked.candidates[0].image.tag?.subject).toBe("red fox");
+    expect(ranked.policyId).toBe(GUARD_POLICY_ID);
 
     const wolf = (await imagesRepository.list()).find(
       (image) => image.tag?.subject === "gray wolf" && !image.tag.flaggedLowConfidence
@@ -85,14 +89,40 @@ describe("semantic matching", () => {
     if (!wolf) throw new Error("seed wolf missing; run corpus pipeline");
     const pairing = await matchingService.forcePair(post.id, wolf.id);
     expect(pairing.status).toBe("guarded");
+    expect(pairing.policyId).toBe(GUARD_POLICY_ID);
+    expect(pairing.featuresJson).toContain("subjectAgreement");
     expect(pairing.guardReason).toContain("Subject conflict");
   });
 });
 
+describe("job idempotency", () => {
+  it("does not create duplicate classify jobs for the same image key", async () => {
+    const images = await imagesRepository.list();
+    const image = images[0];
+    if (!image) throw new Error("no images; run pnpm db:seed");
+    const first = await jobsRepository.enqueue(
+      "classify",
+      JSON.stringify({ imageId: image.id }),
+      `test-classify:${image.id}`
+    );
+    const second = await jobsRepository.enqueue(
+      "classify",
+      JSON.stringify({ imageId: image.id }),
+      `test-classify:${image.id}`
+    );
+    expect(second.id).toBe(first.id);
+  });
+});
+
 describe("labeled evaluation", () => {
-  it("meets the top-1 precision floor including no-match", async () => {
+  it("meets precision, no-match, and hard-negative floors", async () => {
     const result = await evalService.run();
     expect(result.top1Precision).toBeGreaterThanOrEqual(0.8);
-    expect(result.results.find((row) => row.postSlug === "urban-rooftop-gardens")?.status).toBe("no_match");
+    expect(result.noMatchRecall).toBe(1);
+    expect(result.guardFalseAcceptRate).toBe(0);
+    expect(result.matrix.accuracy).toBeGreaterThanOrEqual(0.9);
+    expect(result.results.find((row) => row.postSlug === "urban-rooftop-gardens")?.status).toBe(
+      "no_match"
+    );
   });
 });

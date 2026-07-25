@@ -60,7 +60,7 @@ export function LandingPage() {
             One library. <span className="text-lens">The right image.</span> Never the wrong one.
           </motion.h1>
           <motion.p initial={enter} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: .75, delay: .16 }} className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted">
-            Lens turns visual perception into structured tags, matches by meaning, and refuses a near-miss before it reaches your article.
+            Built for CMS, catalog, and brand teams that cannot ship the wrong hero image. Lens tags what is actually in the frame, matches by meaning, and refuses a near-miss before publish.
           </motion.p>
           <motion.div initial={enter} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }} transition={{ duration: .75, delay: .22 }} className="mt-7 flex flex-wrap justify-center gap-3">
             <Link href="/login" className="btn-primary">Review matches <ArrowRight size={16} /></Link>
@@ -84,7 +84,7 @@ export function LandingPage() {
         <div className="chapter-head">
           <span className="eyebrow"><ScanSearch size={13} /> Perception to decision</span>
           <h2>Understand, rank, then know when to stop.</h2>
-          <p className="text-muted">The difficult part is not finding the highest score. It is refusing the highest score when every candidate is wrong.</p>
+          <p className="text-muted">The difficult part is not finding the highest score. It is refusing the highest score when every candidate is wrong. Wildlife is the demo spine; the same policy works for product and brand libraries.</p>
         </div>
         <div className="grid-3">
           {[
@@ -101,7 +101,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section id="guard" className="chapter pt-6">
+      <section id="guard" className="chapter">
         <div className="chapter-head">
           <span className="eyebrow"><ShieldX size={13} /> Mismatch guard</span>
           <h2>The best candidate can still be wrong.</h2>
@@ -123,9 +123,9 @@ export function LandingPage() {
         </div>
       </section>
 
-      <section className="chapter pt-6">
+      <section className="chapter">
         <div className="grid-3">
-          {[["50", "fixture images"], ["0.90+", "seed eval precision"], ["$0.00", "seed provider cost"]].map(([v, l]) => (
+          {[["50", "fixture images"], ["0.90+", "seed eval precision"], ["BYO", "library path"]].map(([v, l]) => (
             <div key={l} tabIndex={0} className="surface feature-card text-center"><b className="font-display text-4xl text-lens">{v}</b><p className="mono mt-2 text-[10px] uppercase tracking-widest text-muted">{l}</p></div>
           ))}
         </div>

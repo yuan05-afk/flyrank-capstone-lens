@@ -66,12 +66,51 @@ export const POST_FIXTURES = [
     subject: "urban rooftop garden",
     url: "https://example.com/rooftop-gardens",
   },
+  {
+    slug: "gray-wolf-packs",
+    title: "How gray wolf packs hunt",
+    body: "Canis lupus cooperates across long distances. The gray coat and upright ears mark a true wolf, not a fox.",
+    subject: "gray wolf",
+    url: "https://example.com/gray-wolf-packs",
+  },
+  {
+    slug: "family-dog-habits",
+    title: "What domestic dogs learn at home",
+    body: "Canis familiaris thrives with people. This is about the domestic dog, not wild canids.",
+    subject: "domestic dog",
+    url: "https://example.com/family-dog-habits",
+  },
 ];
 
+/** Top-1 labeled cases used by pnpm eval and GET /api/eval */
 export const EVAL_CASES = [
-  { postSlug: "red-fox-field-guide", expectedSubject: "red fox" },
-  { postSlug: "vulpes-vulpes-habitat", expectedSubject: "red fox" },
-  { postSlug: "barn-owl-flight", expectedSubject: "barn owl" },
-  { postSlug: "tiger-stripes", expectedSubject: "tiger" },
-  { postSlug: "urban-rooftop-gardens", expectedSubject: null },
+  { postSlug: "red-fox-field-guide", expectedSubject: "red fox", expectedStatus: "suggested" as const },
+  { postSlug: "vulpes-vulpes-habitat", expectedSubject: "red fox", expectedStatus: "suggested" as const },
+  { postSlug: "barn-owl-flight", expectedSubject: "barn owl", expectedStatus: "suggested" as const },
+  { postSlug: "tiger-stripes", expectedSubject: "tiger", expectedStatus: "suggested" as const },
+  { postSlug: "urban-rooftop-gardens", expectedSubject: null, expectedStatus: "no_match" as const },
+  { postSlug: "gray-wolf-packs", expectedSubject: "gray wolf", expectedStatus: "suggested" as const },
+  { postSlug: "family-dog-habits", expectedSubject: "domestic dog", expectedStatus: "suggested" as const },
+];
+
+/**
+ * Hard-negative matrix: forced pairings that must stay refused or accepted.
+ * Used by eval regression and threshold sweeps.
+ */
+export const EVAL_MATRIX: Array<{
+  postSlug: string;
+  imageName: string;
+  expectedStatus: "suggested" | "guarded" | "no_match";
+}> = [
+  { postSlug: "red-fox-field-guide", imageName: "red-fox-1.svg", expectedStatus: "suggested" },
+  { postSlug: "red-fox-field-guide", imageName: "gray-wolf-1.svg", expectedStatus: "guarded" },
+  { postSlug: "red-fox-field-guide", imageName: "domestic-dog-1.svg", expectedStatus: "guarded" },
+  { postSlug: "vulpes-vulpes-habitat", imageName: "red-fox-2.svg", expectedStatus: "suggested" },
+  { postSlug: "vulpes-vulpes-habitat", imageName: "gray-wolf-2.svg", expectedStatus: "guarded" },
+  { postSlug: "gray-wolf-packs", imageName: "gray-wolf-1.svg", expectedStatus: "suggested" },
+  { postSlug: "gray-wolf-packs", imageName: "red-fox-1.svg", expectedStatus: "guarded" },
+  { postSlug: "family-dog-habits", imageName: "domestic-dog-1.svg", expectedStatus: "suggested" },
+  { postSlug: "family-dog-habits", imageName: "red-fox-1.svg", expectedStatus: "guarded" },
+  { postSlug: "urban-rooftop-gardens", imageName: "red-fox-1.svg", expectedStatus: "guarded" },
+  { postSlug: "red-fox-field-guide", imageName: "red-fox-5.svg", expectedStatus: "guarded" },
 ];
